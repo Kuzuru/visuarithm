@@ -7,9 +7,11 @@ import { createPinia } from "pinia";
 
 import { Scene2D } from "@/app/Scene2D";
 import * as THREE from "three";
+import { Color } from "three";
 import * as TWEEN from "@tweenjs/tween.js";
 
-import { Tree, Node } from "@/app/structures/Tree";
+import { Tree } from "@/app/structures/Tree";
+import { Node } from "@/app/structures/Node";
 
 const app = createApp(App);
 
@@ -183,35 +185,51 @@ console.log(`Vertices:`, storage.vertices);
 // Отрисовка деревьев
 {
 	// Create a new tree
-	const tree = new Tree(null);
+	const tree = new Tree(new Node(1));
 
-	// Create nodes
-	const node1 = new Node(1);
-	const node2 = new Node(2);
-	const node3 = new Node(3);
-	const node4 = new Node(4);
-	const node5 = new Node(5);
-	const node6 = new Node(6);
-	const node7 = new Node(7);
-	const node8 = new Node(8);
+	// Check if root is not null (it should never be null in this case)
+	if (tree.root !== null) {
 
-	// Set root of the tree
-	tree.root = node1;
+		// Create nodes
+		const node2 = new Node(2);
+		const node3 = new Node(3);
+		const node4 = new Node(4);
 
-	// Build the tree
-	node1.addChild(node2);
-	node1.addChild(node3);
-	node1.addChild(node4);
-	node1.addChild(node5);
-	node2.addChild(node4);
-	node2.addChild(node5);
-	node3.addChild(node6);
-	node5.addChild(node7);
-	node5.addChild(node7);
-	node5.addChild(node6);
-	node5.addChild(node8);
+		// Add nodes to the root
+		tree.root.addChild(node2);
+		tree.root.addChild(node3);
+		tree.root.addChild(node4);
 
-	tree.draw(scene, 0.8, 0.5);
+		// Create additional nodes
+		const node5 = new Node(5);
+		const node6 = new Node(6);
+		const node7 = new Node(7);
+		const node8 = new Node(8);
+		const node9 = new Node(9);
+		const node10 = new Node(10);
+		const node11 = new Node(11);
+		const node12 = new Node(12);
+
+		// Add nodes to their parents
+		{
+			node2.addChild(node5);
+			node2.addChild(node9);
+			node3.addChild(node6);
+			node4.addChild(node7);
+			node7.addChild(node8);
+			node5.addChild(node11);
+			node9.addChild(node10);
+			node9.addChild(node11);
+			node11.addChild(node12);
+		}
+
+		tree.draw(scene, 0.8, 0.5);
+
+		node2.circle?.blink(new Color(0x00FF00), 10);
+	}
+
+	// const dfsAnimation = new DFS(tree, 10);
+	// dfsAnimation.start();
 }
 
 // Call animate on the scene to start rendering

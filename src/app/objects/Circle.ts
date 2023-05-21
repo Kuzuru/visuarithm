@@ -3,6 +3,7 @@ import { Color, Vector2 } from "three";
 import type { Scene2D } from "@/app/Scene2D";
 import * as TWEEN from "@tweenjs/tween.js";
 import { generateUUID } from "three/src/math/MathUtils";
+import { Tween } from "@tweenjs/tween.js";
 
 export class Circle {
 	private vID: string;
@@ -145,6 +146,32 @@ export class Circle {
 		// Update border mesh position
 		this._borderMesh.position.setX(xPos);
 		this._borderMesh.position.setY(yPos);
+	}
+
+	setColor(color: Color) {
+		this._borderMesh.material = new THREE.MeshBasicMaterial({ color: color });
+	}
+
+	blink(color: Color, times: number) {
+
+		const originalColor = this._colorMesh;
+		const blinkOnce = () => {
+			return new Promise<void>(resolve => {
+				new Tween(this._borderMesh.material)
+					.to(color, 300)
+					.chain(
+						new Tween(color)
+							.to(originalColor, 300)
+					)
+					.onComplete(() => resolve())
+					.start();
+			});
+		};
+
+		return new Array(times).fill(null).reduce(
+			(prev) => prev.then(() => blinkOnce()),
+			Promise.resolve()
+		);
 	}
 
 	get xPos(): number {

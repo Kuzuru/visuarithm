@@ -4,22 +4,7 @@ import { Circle } from "@/app/objects/Circle";
 import { Line } from "@/app/objects/Line";
 import type { Scene2D } from "@/app/Scene2D";
 import { getVector3 } from "@/app/utils/transformer";
-
-export class Node {
-	data: number;
-	children: Node[];
-	circle: Circle | null;
-
-	constructor(data: number) {
-		this.data = data;
-		this.children = [];
-		this.circle = null;
-	}
-
-	addChild(node: Node) {
-		this.children.push(node);
-	}
-}
+import { Node } from "@/app/structures/Node";
 
 export class Tree {
 	root: Node | null;
