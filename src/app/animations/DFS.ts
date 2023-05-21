@@ -1,24 +1,17 @@
 import { Color } from "three";
 import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
-import type { Edge } from "@/app/objects/Edge";
 
 export class DFS {
 	private tree: Tree;
-	private edges: Map<string, Edge>;
 	private valueToFind: number;
 	private steps: (() => Promise<void>)[] = [];
+	private stopExecution: boolean;
 
-	constructor(tree: Tree, edges: Edge[], valueToFind: number) {
+	constructor(tree: Tree, valueToFind: number) {
 		this.tree = tree;
-		this.edges = new Map();
+		this.stopExecution = false;
 		this.valueToFind = valueToFind;
-
-		for (let i = 0; i < edges.length; i++) {
-			const edge = edges[i];
-			const edgeKey = this.edgeKey(edge.node1, edge.node2);
-			this.edges.set(edgeKey, edge);
-		}
 	}
 
 	createDFSSteps(node: Node | null) {
@@ -33,47 +26,37 @@ export class DFS {
 
 			this.steps.push(() => this.blinkNode(child, new Color(0x0000FF))); // blue
 
-			// Blink edge with edge.line.blink()
-			// TODO: Fix
-			const edgeKey = this.edgeKey(node, child);
-			const edge = this.edges.get(edgeKey);
-			console.log(edge);
-
-			if (edge) {
-				console.log("DO BLINK")
-				this.steps.push(() => edge.line.blink(new Color(0x0000FF), 1));
-			}
-
 			this.createDFSSteps(child);
 
 			if (child.data !== this.valueToFind) {
-				this.steps.push(() => this.blinkNode(child, new Color(0xFF0000))); // red
+				this.steps.push(() => this.shiftNodeColor(child, new Color(0xFF0000))); // red
 			} else {
 				this.steps.push(async () => {
 					console.log("NODE FOUND!!!");
 					this.shiftNodeColor(child, new Color(0xFFD700));
+
+					// Закрашиваем весь путь обратно зеленым
+					let parent = child.parent;
+					while (parent) {
+						await this.shiftNodeColor(parent, new Color(0x008000)); // green
+						parent.setNonColorable();
+						parent = parent.parent;
+					}
+
+					this.stopExecution = true;
 				});
 			}
 		}
 	}
 
-	public addEdge(node1: Node, node2: Node, edge: Edge) {
-		if (!edge) {
-			throw new Error("Edge not found");
-		}
-
-		const edgeKey = this.edgeKey(node1, node2);
-		this.edges.set(edgeKey, edge);
-	}
-
-	private edgeKey(node1: Node, node2: Node) {
-		return `${Math.min(node1.data, node2.data)}-${Math.max(node1.data, node2.data)}`;
-	}
-
 	async start() {
 		this.createDFSSteps(this.tree.root);
-
 		for (const step of this.steps) {
+			// If got stopExecution flag, stop execution
+			if (this.stopExecution) {
+				break;
+			}
+
 			await step();
 		}
 	}
@@ -87,7 +70,7 @@ export class DFS {
 	}
 
 	private shiftNodeColor(node: Node, color: Color) {
-		if (node.circle) {
+		if (node.circle && !node.nonColorable) {
 			return node.circle.smoothBorderColorShift(color);
 		}
 

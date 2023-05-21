@@ -117,7 +117,7 @@ console.log(`Vertices:`, storage.vertices);
 // Camera animations
 {
 	const startPosition = scene.camera.position.clone(); // current camera position
-	const endPosition = new THREE.Vector3(0, -0.8, 5); // new camera position
+	const endPosition = new THREE.Vector3(0, -1.25, 5); // new camera position
 	const duration = 1000; // duration of the animation in milliseconds
 
 	console.log(`Moving camera to ${JSON.stringify(endPosition, null, 2)}`);
@@ -136,7 +136,7 @@ console.log(`Vertices:`, storage.vertices);
 	// Zoom
 	setTimeout(() => {
 		const startWidth = scene.cameraSizes.right - scene.cameraSizes.left;
-		const endWidth = startWidth / 3; // divide by 2 to zoom in, multiply by 2 to zoom out
+		const endWidth = startWidth / 1.3; // divide by 2 to zoom in, multiply by 2 to zoom out
 		const durationZoom = 1000;
 
 		console.log(`Resizing camera to ${endWidth}`);
@@ -223,11 +223,13 @@ console.log(`Vertices:`, storage.vertices);
 		tree.draw(scene, 0.8, 0.5);
 	}
 
-	new DFS(tree, 10)
-		.start()
-		.then(r => {
-			console.log(r)
-		});
+	setTimeout(() => {
+		new DFS(tree, 10)
+			.start()
+			.then(() => {
+				console.log("Execution finished");
+			});
+	}, 2500);
 }
 
 // Call animate on the scene to start rendering
