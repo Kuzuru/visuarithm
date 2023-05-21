@@ -136,7 +136,7 @@ console.log(`Vertices:`, storage.vertices);
 	// Zoom
 	setTimeout(() => {
 		const startWidth = scene.cameraSizes.right - scene.cameraSizes.left;
-		const endWidth = startWidth / 2; // divide by 2 to zoom in, multiply by 2 to zoom out
+		const endWidth = startWidth / 3; // divide by 2 to zoom in, multiply by 2 to zoom out
 		const durationZoom = 1000;
 
 		console.log(`Resizing camera to ${endWidth}`);
@@ -185,22 +185,18 @@ console.log(`Vertices:`, storage.vertices);
 // Отрисовка деревьев
 {
 	// Create a new tree
-	const tree = new Tree(new Node(1));
+	const tree = new Tree(null);
+
+	const node1 = new Node(1);
 
 	// Check if root is not null (it should never be null in this case)
 	if (tree.root !== null) {
+		tree.root?.addChild(node1);
 
 		// Create nodes
 		const node2 = new Node(2);
 		const node3 = new Node(3);
 		const node4 = new Node(4);
-
-		// Add nodes to the root
-		tree.root.addChild(node2);
-		tree.root.addChild(node3);
-		tree.root.addChild(node4);
-
-		// Create additional nodes
 		const node5 = new Node(5);
 		const node6 = new Node(6);
 		const node7 = new Node(7);
@@ -212,15 +208,17 @@ console.log(`Vertices:`, storage.vertices);
 
 		// Add nodes to their parents
 		{
+			node1.addChild(node2);
+			node1.addChild(node3);
+			node2.addChild(node4);
 			node2.addChild(node5);
-			node2.addChild(node9);
 			node3.addChild(node6);
-			node4.addChild(node7);
-			node7.addChild(node8);
-			node5.addChild(node11);
-			node9.addChild(node10);
-			node9.addChild(node11);
-			node11.addChild(node12);
+			node3.addChild(node7);
+			node4.addChild(node8);
+			node5.addChild(node9);
+			node6.addChild(node10);
+			node7.addChild(node11);
+			node8.addChild(node12);
 		}
 
 		tree.draw(scene, 0.8, 0.5);

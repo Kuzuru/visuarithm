@@ -28,6 +28,11 @@ export class DFS {
 
 			if (child.data !== this.valueToFind) {
 				this.steps.push(() => this.blinkNode(child, new Color(0xFF0000))); // red
+			} else {
+				this.steps.push(async () => {
+					console.log("NODE FOUND!!!");
+					this.shiftNodeColor(child, new Color(0xFFD700));
+				});
 			}
 		}
 	}
@@ -41,7 +46,15 @@ export class DFS {
 
 	private blinkNode(node: Node, color: Color) {
 		if (node.circle) {
-			return node.circle.blink(color, 3);
+			return node.circle.blink(color, 1, node.data);
+		}
+
+		return Promise.resolve();
+	}
+
+	private shiftNodeColor(node: Node, color: Color) {
+		if (node.circle) {
+			return node.circle.smoothBorderColorShift(color);
 		}
 
 		return Promise.resolve();

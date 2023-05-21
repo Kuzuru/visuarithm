@@ -151,8 +151,8 @@ export class Circle {
 		this._borderMesh.material = new THREE.MeshBasicMaterial({ color: color });
 	}
 
-	blink(color: Color, times: number) {
-		console.log(`Blinking ${times} times with color ${JSON.stringify(color)}`);
+	blink(color: Color, times: number, node_number?: number) {
+		console.log(`Blinking ${times} times${node_number ? ` for node ${node_number} ` : " "}with color ${JSON.stringify(color)}`);
 
 		const originalColor = (this._borderMesh.material as THREE.MeshBasicMaterial).color.clone();
 		const colorObject = { r: color.r, g: color.g, b: color.b };
@@ -179,12 +179,41 @@ export class Circle {
 		);
 	}
 
+	smoothBorderColorShift(color: Color) {
+		console.log("Smoothing color...");
+		const colorObject = { r: color.r, g: color.g, b: color.b };
+
+		const shift = () => {
+			return new Promise<void>((resolve) => {
+				new TWEEN.Tween((this._borderMesh.material as THREE.MeshBasicMaterial).color)
+					.to(colorObject, 500)
+					.onComplete(() => {
+						resolve();
+					})
+					.start();
+			});
+		};
+
+		return new Array(1).fill(null).reduce(
+			(prev) => prev.then(() => shift()),
+			Promise.resolve()
+		);
+	}
+
 	get xPos(): number {
 		return this._xPos;
 	}
 
+	set xPos(xPos: number) {
+		this._xPos = xPos;
+	}
+
 	get yPos(): number {
 		return this._yPos;
+	}
+
+	set yPos(yPos: number) {
+		this._yPos = yPos;
 	}
 
 	get position(): Vector2 {
