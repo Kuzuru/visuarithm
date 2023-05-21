@@ -1,32 +1,43 @@
 import * as THREE from "three";
 import * as TWEEN from "@tweenjs/tween.js";
+import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
 export class Line extends THREE.Object3D {
 
 	private start: THREE.Object3D;
 	private end: THREE.Object3D;
-	private readonly internalLine: THREE.Line;
+	private internalLine: Line2;
 
 	constructor(scene: any, start: THREE.Vector3, end: THREE.Vector3, color: number, linewidth: number) {
 		super();
 
-		const material = new THREE.LineBasicMaterial({ color: color, linewidth: linewidth });
+		// Create a new LineGeometry
+		const geometry = new LineGeometry();
+		geometry.setPositions([start.x, start.y, start.z, end.x, end.y, end.z]);
 
-		const startObj = new THREE.Object3D();
-		startObj.position.copy(start);
-		scene.addToScene(startObj);
+		// Create a new LineMaterial
+		const material = new LineMaterial({
+			color: <number><unknown>(new THREE.Color(color)),
+			linewidth: linewidth,  // linewidth is now in pixels
+			resolution: new THREE.Vector2(window.innerWidth, window.innerHeight)  // to be updated on resize
+		});
 
-		const endObj = new THREE.Object3D();
-		endObj.position.copy(end);
-		scene.addToScene(endObj);
+		// Create a new Line2
+		this.internalLine = new Line2(geometry, material);
+		// Don't forget to compute lineDistances for the shader
+		this.internalLine.computeLineDistances();
 
-		const geometry = new THREE.BufferGeometry().setFromPoints([startObj.position.clone(), endObj.position.clone()]);
-
-		this.internalLine = new THREE.Line(geometry, material);
 		this.add(this.internalLine);
 
-		this.start = startObj;
-		this.end = endObj;
+		this.start = new THREE.Object3D();
+		this.start.position.copy(start);
+		scene.addToScene(this.start);
+
+		this.end = new THREE.Object3D();
+		this.end.position.copy(end);
+		scene.addToScene(this.end);
 
 		// Add this line to the scene
 		scene.addToScene(this.internalLine);
@@ -37,7 +48,8 @@ export class Line extends THREE.Object3D {
 			animate: () => {
 				// Update the positions of the line vertices
 				const vertices = [this.start.position.clone(), this.end.position.clone()];
-				this.geometry.setFromPoints(vertices);
+				this.geometry.setPositions([vertices[0].x, vertices[0].y, vertices[0].z, vertices[1].x, vertices[1].y, vertices[1].z]);
+				this.internalLine.computeLineDistances();
 			}
 		});
 	}
@@ -55,6 +67,6 @@ export class Line extends THREE.Object3D {
 	}
 
 	get geometry() {
-		return this.internalLine.geometry as THREE.BufferGeometry;
+		return this.internalLine.geometry as LineGeometry;
 	}
 }
