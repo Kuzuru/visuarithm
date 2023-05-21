@@ -58,7 +58,8 @@ export class Circle {
 		this._colorMesh = new THREE.Mesh(colorGeometry, colorMaterial);
 
 		// Make sure the color circle is on top of the border circle
-		this._colorMesh.position.z = 0.1;
+		this._colorMesh.position.z = 2;
+		this._borderMesh.position.z = 1;
 
 		// Set the position of the color circle
 		this._colorMesh.position.setX(xPos);
