@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 import { Color } from "three";
 import { Circle } from "@/app/objects/Circle";
 import { Line } from "@/app/objects/Line";
@@ -8,9 +8,11 @@ import { Node } from "@/app/structures/Node";
 
 export class Tree {
 	root: Node | null;
+	positions: Set<string>; // New data structure to store positions
 
-	constructor(rootData: any) {
+	constructor(rootData: number) {
 		this.root = new Node(rootData);
+		this.positions = new Set<string>();
 	}
 
 	findNode(node: Node | null, data: any): Node | null {
@@ -39,9 +41,26 @@ export class Tree {
 		}
 	}
 
+	private getFreePosition(x: number, y: number, diameter: number): [number, number] {
+		let newX = x;
+
+		// Check if position is free
+		while (this.positions.has(`${newX.toFixed(2)}-${y.toFixed(2)}`)) {
+			newX += diameter;
+		}
+
+		return [newX, y];
+	}
+
 	private _drawNode(node: Node, scene: Scene2D, x: number, y: number, xSpacing: number, ySpacing: number) {
+		// Find a free position for this node
+		const [freeX, freeY] = this.getFreePosition(x, y, 0.4);
+
 		// Create a circle for this node
-		node.circle = new Circle(scene, 0.1, x, y, new Color(0x000000));
+		node.circle = new Circle(scene, 0.1, freeX, freeY, new Color(0x000000));
+
+		// Add this position to the set of occupied positions
+		this.positions.add(`${freeX.toFixed(2)}-${freeY.toFixed(2)}`);
 
 		// Add circle to the scene
 		scene.addToScene(<THREE.Object3D><unknown>node.circle);
@@ -51,8 +70,11 @@ export class Tree {
 			const child = node.children[i];
 
 			// Calculate position for this child
-			const childX = x - (node.children.length - 1) * xSpacing / 2 + i * xSpacing;
-			const childY = y - ySpacing;
+			let childX = x - (node.children.length - 1) * xSpacing / 2 + i * xSpacing;
+			let childY = y - ySpacing;
+
+			// Check if this position is free and adjust if necessary
+			[childX, childY] = this.getFreePosition(childX, childY, 0.4);
 
 			// Draw line between this node and its child
 			if (node.circle) {
@@ -63,5 +85,6 @@ export class Tree {
 			// Draw child
 			this._drawNode(child, scene, childX, childY, xSpacing, ySpacing);
 		}
+
 	}
 }
