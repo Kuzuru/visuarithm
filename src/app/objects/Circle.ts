@@ -3,7 +3,6 @@ import { Color, Vector2 } from "three";
 import type { Scene2D } from "@/app/Scene2D";
 import * as TWEEN from "@tweenjs/tween.js";
 import { generateUUID } from "three/src/math/MathUtils";
-import { Tween } from "@tweenjs/tween.js";
 
 export class Circle {
 	private vID: string;
@@ -110,12 +109,12 @@ export class Circle {
 
 		const currentPosition = {
 			x: this._xPos,
-			y: this._yPos,
+			y: this._yPos
 		};
 
 		const targetPosition = {
 			x: x,
-			y: y,
+			y: y
 		};
 
 		new TWEEN.Tween(currentPosition)
@@ -153,17 +152,23 @@ export class Circle {
 	}
 
 	blink(color: Color, times: number) {
+		console.log(`Blinking ${times} times with color ${JSON.stringify(color)}`);
 
-		const originalColor = this._colorMesh;
+		const originalColor = (this._borderMesh.material as THREE.MeshBasicMaterial).color.clone();
+		const colorObject = { r: color.r, g: color.g, b: color.b };
+
 		const blinkOnce = () => {
 			return new Promise<void>(resolve => {
-				new Tween(this._borderMesh.material)
-					.to(color, 300)
-					.chain(
-						new Tween(color)
-							.to(originalColor, 300)
-					)
-					.onComplete(() => resolve())
+				new TWEEN.Tween((this._borderMesh.material as THREE.MeshBasicMaterial).color)
+					.to(colorObject, 500)
+					.onComplete(() => {
+						new TWEEN.Tween((this._borderMesh.material as THREE.MeshBasicMaterial).color)
+							.to({ r: originalColor.r, g: originalColor.g, b: originalColor.b }, 500)
+							.onComplete(() => {
+								resolve();
+							})
+							.start();
+					})
 					.start();
 			});
 		};

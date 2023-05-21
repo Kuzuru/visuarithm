@@ -7,11 +7,11 @@ import { createPinia } from "pinia";
 
 import { Scene2D } from "@/app/Scene2D";
 import * as THREE from "three";
-import { Color } from "three";
 import * as TWEEN from "@tweenjs/tween.js";
 
 import { Tree } from "@/app/structures/Tree";
 import { Node } from "@/app/structures/Node";
+import { DFS } from "@/app/animations/DFS";
 
 const app = createApp(App);
 
@@ -224,12 +224,10 @@ console.log(`Vertices:`, storage.vertices);
 		}
 
 		tree.draw(scene, 0.8, 0.5);
-
-		node2.circle?.blink(new Color(0x00FF00), 10);
 	}
 
-	// const dfsAnimation = new DFS(tree, 10);
-	// dfsAnimation.start();
+	const dfsAnimation = new DFS(tree, 10);
+	dfsAnimation.start();
 }
 
 // Call animate on the scene to start rendering
