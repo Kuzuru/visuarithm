@@ -4,17 +4,12 @@ import "./assets/main.css";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
-import * as THREE from "three";
-import { Color } from "three";
-import * as TWEEN from "@tweenjs/tween.js";
 
 import { Scene2D } from "@/app/Scene2D";
+import * as THREE from "three";
+import * as TWEEN from "@tweenjs/tween.js";
 
-import { Circle } from "@/app/objects/Circle";
-import { Line } from "@/app/objects/Line";
-
-import { useGraphStore } from "@/stores/vertex";
-import { getVector3 } from "@/app/utils/transformer";
+import { Tree, Node } from "@/app/structures/Tree";
 
 const app = createApp(App);
 
@@ -47,6 +42,7 @@ const scene = new Scene2D();
 // }
 
 
+/*
 let lastDrawnCircle: [number, number] = [-0.4 * 5.25, 1];
 let lastCircle: Circle;
 
@@ -95,7 +91,7 @@ console.log(`Vertices:`, storage.vertices);
 					const vertex2 = storage.vertices[j];
 
 					// Create a new line with a material and geometry
-					const line = new Line(scene, getVector3(vertex1), getVector3(vertex2), 0xff00ff, 16);
+					const line = new Line(scene, getVector3(vertex1), getVector3(vertex2), Math.random() * 0xffffff, 4);
 
 					// Add the line to the scene
 					scene.addToScene(line);
@@ -114,11 +110,12 @@ console.log(`Vertices:`, storage.vertices);
 
 
 }
+*/
 
 // Camera animations
 {
 	const startPosition = scene.camera.position.clone(); // current camera position
-	const endPosition = new THREE.Vector3(0, 1, 5); // new camera position
+	const endPosition = new THREE.Vector3(0, -0.8, 5); // new camera position
 	const duration = 1000; // duration of the animation in milliseconds
 
 	console.log(`Moving camera to ${JSON.stringify(endPosition, null, 2)}`);
@@ -153,6 +150,7 @@ console.log(`Vertices:`, storage.vertices);
 	}, 1100);
 }
 
+/*
 // Передвигаем все круги в центр внизу
 {
 	setTimeout(() => {
@@ -180,7 +178,41 @@ console.log(`Vertices:`, storage.vertices);
 		lastCircle.setPositionSmoothly(-1, 1, 1000);
 	}, 5400);
 }
+*/
+
+// Отрисовка деревьев
+{
+	// Create a new tree
+	const tree = new Tree(null);
+
+	// Create nodes
+	const node1 = new Node(1);
+	const node2 = new Node(2);
+	const node3 = new Node(3);
+	const node4 = new Node(4);
+	const node5 = new Node(5);
+	const node6 = new Node(6);
+	const node7 = new Node(7);
+	const node8 = new Node(8);
+
+	// Set root of the tree
+	tree.root = node1;
+
+	// Build the tree
+	node1.addChild(node2);
+	node1.addChild(node3);
+	node1.addChild(node4);
+	node1.addChild(node5);
+	node2.addChild(node4);
+	node2.addChild(node5);
+	node3.addChild(node6);
+	node5.addChild(node7);
+	node5.addChild(node7);
+	node5.addChild(node6);
+	node5.addChild(node8);
+
+	tree.draw(scene, 0.8, 0.5);
+}
 
 // Call animate on the scene to start rendering
 scene.animate();
-
