@@ -78,7 +78,7 @@ export class Tree {
 
 			// Draw line between this node and its child
 			if (node.circle) {
-				const line = new Line(scene, getVector3(node.circle), new THREE.Vector3(childX, childY, 0), Math.random() * 0xffffff, 4);
+				const line = new Line(scene, getVector3(node.circle), new THREE.Vector3(childX, childY, 0),0x000000, 4);
 				scene.addToScene(line);
 			}
 

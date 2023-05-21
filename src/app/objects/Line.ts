@@ -1,14 +1,14 @@
 import * as THREE from "three";
+import type { Color } from "three";
 import * as TWEEN from "@tweenjs/tween.js";
-import { Line2 } from 'three/examples/jsm/lines/Line2';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
+import { Line2 } from "three/examples/jsm/lines/Line2";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 
 export class Line extends THREE.Object3D {
-
 	private start: THREE.Object3D;
 	private end: THREE.Object3D;
-	private internalLine: Line2;
+	public internalLine: Line2;
 
 	constructor(scene: any, start: THREE.Vector3, end: THREE.Vector3, color: number, linewidth: number) {
 		super();
@@ -64,6 +64,55 @@ export class Line extends THREE.Object3D {
 			.to(end, duration)
 			.easing(TWEEN.Easing.Quadratic.InOut)
 			.start();
+	}
+
+	blink(color: Color, times: number) {
+		console.log(`Blinking ${times} times with color ${JSON.stringify(color)}`);
+
+		const originalColor = (this.internalLine.material as unknown as THREE.LineBasicMaterial).color.clone();
+		const colorObject = { r: color.r, g: color.g, b: color.b };
+
+		const blinkOnce = () => {
+			return new Promise<void>(resolve => {
+				new TWEEN.Tween((this.internalLine.material as unknown as THREE.LineBasicMaterial).color)
+					.to(colorObject, 500)
+					.onComplete(() => {
+						new TWEEN.Tween((this.internalLine.material as unknown as THREE.LineBasicMaterial).color)
+							.to({ r: originalColor.r, g: originalColor.g, b: originalColor.b }, 500)
+							.onComplete(() => {
+								resolve();
+							})
+							.start();
+					})
+					.start();
+			});
+		};
+
+		return new Array(times).fill(null).reduce(
+			(prev) => prev.then(() => blinkOnce()),
+			Promise.resolve()
+		);
+	}
+
+	smoothBorderColorShift(color: Color) {
+		console.log("Smoothing color...");
+		const colorObject = { r: color.r, g: color.g, b: color.b };
+
+		const shift = () => {
+			return new Promise<void>((resolve) => {
+				new TWEEN.Tween((this.internalLine.material as unknown as THREE.LineBasicMaterial).color)
+					.to(colorObject, 500)
+					.onComplete(() => {
+						resolve();
+					})
+					.start();
+			});
+		};
+
+		return new Array(1).fill(null).reduce(
+			(prev) => prev.then(() => shift()),
+			Promise.resolve()
+		);
 	}
 
 	get geometry() {

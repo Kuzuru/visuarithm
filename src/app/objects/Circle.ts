@@ -147,10 +147,6 @@ export class Circle {
 		this._borderMesh.position.setY(yPos);
 	}
 
-	setColor(color: Color) {
-		this._borderMesh.material = new THREE.MeshBasicMaterial({ color: color });
-	}
-
 	blink(color: Color, times: number, node_number?: number) {
 		console.log(`Blinking ${times} times${node_number ? ` for node ${node_number} ` : " "}with color ${JSON.stringify(color)}`);
 

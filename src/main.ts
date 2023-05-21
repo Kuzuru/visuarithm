@@ -185,13 +185,12 @@ console.log(`Vertices:`, storage.vertices);
 // Отрисовка деревьев
 {
 	// Create a new tree
-	const tree = new Tree(null);
-
-	const node1 = new Node(1);
+	const root_node = new Node(1);
+	const tree = new Tree(root_node.data);
 
 	// Check if root is not null (it should never be null in this case)
 	if (tree.root !== null) {
-		tree.root?.addChild(node1);
+		tree.root?.addChild(root_node);
 
 		// Create nodes
 		const node2 = new Node(2);
@@ -208,8 +207,8 @@ console.log(`Vertices:`, storage.vertices);
 
 		// Add nodes to their parents
 		{
-			node1.addChild(node2);
-			node1.addChild(node3);
+			root_node.addChild(node2);
+			root_node.addChild(node3);
 			node2.addChild(node4);
 			node2.addChild(node5);
 			node3.addChild(node6);
@@ -224,8 +223,11 @@ console.log(`Vertices:`, storage.vertices);
 		tree.draw(scene, 0.8, 0.5);
 	}
 
-	const dfsAnimation = new DFS(tree, 10);
-	dfsAnimation.start();
+	new DFS(tree, 10)
+		.start()
+		.then(r => {
+			console.log(r)
+		});
 }
 
 // Call animate on the scene to start rendering
