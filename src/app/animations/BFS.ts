@@ -9,11 +9,11 @@ export class BFS extends TreeAnimation {
 		super(tree, valueToFind);
 	}
 
-	createSteps() {
+	createSteps(node: Node | null = this.tree.root) {
 		const queue: Node[] = [];
 
-		if (this.tree.root) {
-			queue.push(this.tree.root);
+		if (node) {
+			queue.push(node);
 		}
 
 		while (queue.length > 0) {
