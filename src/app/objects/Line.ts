@@ -1,13 +1,13 @@
-import * as THREE from "three";
 import type { Color } from "three";
+import * as THREE from "three";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 
 export class Line extends THREE.Object3D {
-	private start: THREE.Object3D;
-	private end: THREE.Object3D;
+	start: THREE.Object3D;
+	end: THREE.Object3D;
 	public internalLine: Line2;
 
 	constructor(scene: any, start: THREE.Vector3, end: THREE.Vector3, color: number, linewidth: number) {

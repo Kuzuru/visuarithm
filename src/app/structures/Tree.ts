@@ -5,6 +5,7 @@ import { Line } from "@/app/objects/Line";
 import type { Scene2D } from "@/app/Scene2D";
 import { getVector3 } from "@/app/utils/transformer";
 import { Node } from "@/app/structures/Node";
+import { Edge } from "@/app/objects/Edge";
 
 export class Tree {
 	root: Node | null;
@@ -78,8 +79,12 @@ export class Tree {
 
 			// Draw line between this node and its child
 			if (node.circle) {
-				const line = new Line(scene, getVector3(node.circle), new THREE.Vector3(childX, childY, 0),0x000000, 4);
+				const line = new Line(scene, getVector3(node.circle), new THREE.Vector3(childX, childY, 0), 0x000000, 4);
 				scene.addToScene(line);
+
+				const edge = new Edge(line, node, child);
+				node.connectedEdges.push(edge);
+				child.connectedEdges.push(edge);
 			}
 
 			// Draw child

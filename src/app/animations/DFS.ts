@@ -1,6 +1,7 @@
 import { Color } from "three";
 import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
+import { NodeAnimations } from "@/app/animatiors/common/NodeAnimations";
 
 export class DFS {
 	private tree: Tree;
@@ -19,29 +20,31 @@ export class DFS {
 			return;
 		}
 
-		// this.steps.push(() => this.blinkNode(node, new Color(0x008000))); // green
-
 		for (let i = 0; i < node.children.length; i++) {
 			const child = node.children[i];
 
-			this.steps.push(() => this.blinkNode(child, new Color(0x0000FF))); // blue
+			this.steps.push(() => NodeAnimations.blinkNode(child, new Color(0x0000FF))); // blue
 
 			this.createDFSSteps(child);
 
 			if (child.data !== this.valueToFind) {
-				this.steps.push(() => this.shiftNodeColor(child, new Color(0xFF0000))); // red
+				this.steps.push(() => NodeAnimations.shiftNodeColor(child, new Color(0xFF0000)));
 			} else {
 				this.steps.push(async () => {
 					console.log("NODE FOUND!!!");
-					this.shiftNodeColor(child, new Color(0xFFD700));
+
+					NodeAnimations.shiftNodeColor(child, new Color(0xFFD700));
+					NodeAnimations.changeNodeRadius(child, 0.15, 1000);
 
 					// Закрашиваем весь путь обратно зеленым
 					let parent = child.parent;
 					while (parent) {
-						await this.shiftNodeColor(parent, new Color(0x008000)); // green
+						await NodeAnimations.shiftNodeColor(parent, new Color(0x008000)); // green
 						parent.setNonColorable();
 						parent = parent.parent;
 					}
+
+					NodeAnimations.changeNodeRadius(child, 0.1, 1000);
 
 					this.stopExecution = true;
 				});
@@ -59,21 +62,5 @@ export class DFS {
 
 			await step();
 		}
-	}
-
-	private blinkNode(node: Node, color: Color) {
-		if (node.circle) {
-			return node.circle.blink(color, 1, node.data);
-		}
-
-		return Promise.resolve();
-	}
-
-	private shiftNodeColor(node: Node, color: Color) {
-		if (node.circle && !node.nonColorable) {
-			return node.circle.smoothBorderColorShift(color);
-		}
-
-		return Promise.resolve();
 	}
 }

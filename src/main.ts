@@ -136,7 +136,7 @@ console.log(`Vertices:`, storage.vertices);
 	// Zoom
 	setTimeout(() => {
 		const startWidth = scene.cameraSizes.right - scene.cameraSizes.left;
-		const endWidth = startWidth / 1.3; // divide by 2 to zoom in, multiply by 2 to zoom out
+		const endWidth = startWidth / 2; // divide by 2 to zoom in, multiply by 2 to zoom out
 		const durationZoom = 1000;
 
 		console.log(`Resizing camera to ${endWidth}`);

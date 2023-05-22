@@ -1,4 +1,5 @@
 import type { Circle } from "@/app/objects/Circle";
+import type { Edge } from "@/app/objects/Edge";
 
 export class Node {
 	data: number;
@@ -6,6 +7,7 @@ export class Node {
 	children: Node[];
 	circle: Circle | null;
 	nonColorable: boolean;
+	connectedEdges: Edge[];
 
 	constructor(data: number) {
 		this.data = data;
@@ -13,6 +15,7 @@ export class Node {
 		this.children = [];
 		this.circle = null;
 		this.nonColorable = false;
+		this.connectedEdges = [];
 	}
 
 	setNonColorable() {
