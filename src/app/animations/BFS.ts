@@ -3,52 +3,35 @@ import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
 import { NodeAnimations } from "@/app/animatiors/common/NodeAnimations";
 import { TreeAnimation } from "@/app/animations/default/TreeAnimation";
+import { Queue } from "@/app/structures/Queue";
 
 export class BFS extends TreeAnimation {
 	constructor(tree: Tree, valueToFind: number) {
 		super(tree, valueToFind);
 	}
 
-	createSteps(node: Node | null = this.tree.root) {
-		const queue: Node[] = [];
-
-		if (node) {
-			queue.push(node);
+	createSteps() {
+		const queue = new Queue<Node>();
+		if (this.tree.root) {
+			queue.enqueue(this.tree.root);
 		}
 
-		while (queue.length > 0) {
-			const node = queue.shift();
+		while (!queue.isEmpty()) {
+			const node = queue.dequeue();
 
-			if (node) {
-				this.steps.push(() => NodeAnimations.blinkNode(node, new Color(0x0000FF))); // blue
-
-				if (node.data !== this.valueToFind) {
-					this.steps.push(() => NodeAnimations.shiftNodeColor(node, new Color(0xFF0000))); // red
-				} else {
-					this.steps.push(async () => {
-						console.log("NODE FOUND!!!");
-
-						NodeAnimations.shiftNodeColor(node, new Color(0xFFD700)); // gold
-						NodeAnimations.changeNodeRadius(node, 0.15, 1000);
-
-						// Colour the whole path back in green
-						let parent = node.parent;
-						while (parent) {
-							await NodeAnimations.shiftNodeColor(parent, new Color(0x008000)); // green
-							parent.setNonColorable();
-							parent = parent.parent;
-						}
-
-						NodeAnimations.changeNodeRadius(node, 0.1, 1000);
-
-						this.stopExecution = true;
-					});
-				}
-
-				for (let i = 0; i < node.children.length; i++) {
-					queue.push(node.children[i]);
-				}
+			if (!node) {
+				continue;
 			}
+
+			// Add animation step for the current node
+			this.steps.push(() => NodeAnimations.blinkNode(node, new Color(0x0000FF))); // blue
+
+			for (const child of node.children) {
+				queue.enqueue(child);
+			}
+
+			// Add steps for the node based on whether it's the target node or not
+			this.addNodeSteps(node, node.data === this.valueToFind);
 		}
 	}
 }
