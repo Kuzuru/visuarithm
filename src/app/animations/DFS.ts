@@ -2,20 +2,14 @@ import { Color } from "three";
 import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
 import { NodeAnimations } from "@/app/animatiors/common/NodeAnimations";
+import { TreeAnimation } from "@/app/animations/default/TreeAnimation";
 
-export class DFS {
-	private tree: Tree;
-	private valueToFind: number;
-	private steps: (() => Promise<void>)[] = [];
-	private stopExecution: boolean;
-
+export class DFS extends TreeAnimation {
 	constructor(tree: Tree, valueToFind: number) {
-		this.tree = tree;
-		this.stopExecution = false;
-		this.valueToFind = valueToFind;
+		super(tree, valueToFind);
 	}
 
-	createDFSSteps(node: Node | null) {
+	createSteps(node: Node | null = this.tree.root) {
 		if (!node) {
 			return;
 		}
@@ -25,7 +19,7 @@ export class DFS {
 
 			this.steps.push(() => NodeAnimations.blinkNode(child, new Color(0x0000FF))); // blue
 
-			this.createDFSSteps(child);
+			this.createSteps(child);
 
 			if (child.data !== this.valueToFind) {
 				this.steps.push(() => NodeAnimations.shiftNodeColor(child, new Color(0xFF0000)));
@@ -49,18 +43,6 @@ export class DFS {
 					this.stopExecution = true;
 				});
 			}
-		}
-	}
-
-	async start() {
-		this.createDFSSteps(this.tree.root);
-		for (const step of this.steps) {
-			// If got stopExecution flag, stop execution
-			if (this.stopExecution) {
-				break;
-			}
-
-			await step();
 		}
 	}
 }
