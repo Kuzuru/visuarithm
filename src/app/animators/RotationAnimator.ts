@@ -1,4 +1,4 @@
-import type { ObjectAnimator } from "@/app/animatiors/ObjectAnimator";
+import type { ObjectAnimator } from "@/app/animators/ObjectAnimator";
 import type { Mesh } from "three";
 
 export class RotationAnimator implements ObjectAnimator {

@@ -1,6 +1,6 @@
 import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
-import { NodeAnimations } from "@/app/animatiors/common/NodeAnimations";
+import { NodeAnimations } from "@/app/animators/common/NodeAnimations";
 import { Color } from "three";
 
 export abstract class TreeAnimation {

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { ObjectAnimator } from "@/app/animatiors/ObjectAnimator";
+import type { ObjectAnimator } from "@/app/animators/ObjectAnimator";
 import * as TWEEN from "@tweenjs/tween.js";
 
 export type CameraSizes = {

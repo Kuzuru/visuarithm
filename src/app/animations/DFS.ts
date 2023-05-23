@@ -1,7 +1,7 @@
 import { Color } from "three";
 import type { Tree } from "@/app/structures/Tree";
 import type { Node } from "@/app/structures/Node";
-import { NodeAnimations } from "@/app/animatiors/common/NodeAnimations";
+import { NodeAnimations } from "@/app/animators/common/NodeAnimations";
 import { TreeAnimation } from "@/app/animations/default/TreeAnimation";
 
 export class DFS extends TreeAnimation {
