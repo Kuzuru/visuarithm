@@ -1,5 +1,5 @@
 import type { Circle } from "@/app/objects/Circle";
-import type { Edge } from "@/app/objects/Edge";
+import type { Edge } from "@/app/structures/Edge";
 
 export class Node {
 	data: number;

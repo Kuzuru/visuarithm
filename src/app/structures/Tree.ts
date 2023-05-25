@@ -5,7 +5,7 @@ import { Line } from "@/app/objects/Line";
 import type { Scene2D } from "@/app/Scene2D";
 import { getVector3 } from "@/app/utils/transformer";
 import { Node } from "@/app/structures/Node";
-import { Edge } from "@/app/objects/Edge";
+import { Edge } from "@/app/structures/Edge";
 
 export class Tree {
 	root: Node | null;
